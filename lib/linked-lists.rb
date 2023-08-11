@@ -15,21 +15,18 @@ class LinkedList
   end
 
   def append(value)
-    # adds a new node containing value to the end of the list
     current = @head
     current = current.next_node until current.next_node.nil?
     current.next_node = Node.new(value)
   end
 
   def prepend(value)
-    # adds a new node containing value to the start of the list
     new_head = Node.new(value)
     new_head.next_node = @head
     @head = new_head
   end
 
   def size
-    # returns the total number of nodes in the list
     current = @head
     count = current.nil? ? 0 : 1
     until current.next_node.nil?
@@ -40,7 +37,6 @@ class LinkedList
   end
 
   def tail
-    # returns the last node in the list
     return nil if @head.nil?
 
     current = @head
@@ -53,7 +49,6 @@ class LinkedList
   end
 
   def at(index)
-    # returns the node at the given index
     return nil if @head.nil? || index > size - 1
 
     current = @head
@@ -67,7 +62,6 @@ class LinkedList
   end
 
   def pop
-    # removes the last element from the list
     return nil if @head.nil?
 
     if @head.next_node.nil?
@@ -87,9 +81,6 @@ class LinkedList
   end
 
   def contains?(value)
-    # returns true if the passed in value is in the list
-    # otherwise returns false
-
     current = @head
     until current.nil?
       return true if current.value == value
@@ -99,9 +90,6 @@ class LinkedList
   end
 
   def find(value)
-    # returns the index of the node containing velue
-    # if not found, returns nil
-
     current = @head
     i = 0
     until current.nil?
@@ -113,11 +101,6 @@ class LinkedList
   end
 
   def to_s
-    # represent your LinkedList objects as strings, so you
-    # can print them out and preview them in the console.
-
-    # The format should be: ( value ) -> ( value ) -> ( value ) -> nil
-
     str = ''
     current = @head
     until current.nil?
@@ -126,14 +109,71 @@ class LinkedList
     end
     str << 'nil'
   end
+
+  def insert_at(value, index)
+    if @head.nil?
+      @head = Node.new(value)
+      return
+    end
+
+    if index.zero?
+      node = Node.new(value)
+      node.next_node = @head
+      @head = node
+      return
+    end
+
+    previous = current = @head
+    i = 0
+
+    loop do
+      break if index == i
+
+      append(nil) if current.next_node.nil?
+
+      previous = current
+      current = current.next_node
+      i += 1
+    end
+    node = Node.new(value)
+    previous.next_node = node
+    node.next_node = current
+  end
+
+  def remove_at(index)
+    return nil if @head.nil? || index > size - 1
+
+    if index.zero?
+      removed = @head
+      @head = @head.next_node
+      return removed
+    end
+
+    previous = current = @head
+    i = 0
+    loop do
+      break if current.next_node.nil? || i == index
+
+      previous = current
+      current = current.next_node
+      i += 1
+    end
+    if current.next_node.nil?
+      removed = nil
+    else
+      removed = current.next_node
+      previous.next_node = current.next_node
+    end
+    removed
+  end
 end
 
-
+# tests
 test = LinkedList.new(Node.new('original node'))
 
 puts test
 
-puts 'append test1'
+puts "\nappend test1"
 test.append('test1')
 
 puts 'append test2'
@@ -167,7 +207,15 @@ test.prepend('prepend-test')
 puts 'append append-test'
 test.append('append-test')
 
+puts "\n#{test}"
+
 puts "\n  at 0:   #{test.at(0)}"
 puts "  at 2:   #{test.at(2)}"
 
+puts "\ninsert inserted-node at 2"
+test.insert_at('inserted-node', 2)
+puts "\n#{test}"
+
+puts "\nremove test1 at 3"
+test.remove_at(3)
 puts "\n#{test}"
